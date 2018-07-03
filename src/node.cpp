@@ -201,8 +201,8 @@ int main(int argc, char * argv[]) {
     nh_private.param<bool>("inverted", inverted, false);
     nh_private.param<bool>("angle_compensate", angle_compensate, false);
     nh_private.param<std::string>("scan_mode", scan_mode, std::string());
-    nh_private.param<double>("min_distance", min_distance, 0.15);
-    nh_private.param<double>("max_distance", max_distance, 8.0);
+    nh_private.param<float>("min_distance", min_distance, 0.15);
+    nh_private.param<float>("max_distance", max_distance, 8.0);
     nh_private.param<double>("latency", latency, 0.0);
     latency *= 1.e-3; // ms -> s
 
