@@ -190,6 +190,8 @@ int main(int argc, char * argv[]) {
     float max_distance = 8.0;
     int angle_compensate_multiple = 1;//it stand of angle compensate at per 1 degree
     std::string scan_mode;
+    double latency;
+
     ros::NodeHandle nh;
     ros::Publisher scan_pub = nh.advertise<sensor_msgs::LaserScan>("scan", 1000);
     ros::NodeHandle nh_private("~");
@@ -199,6 +201,8 @@ int main(int argc, char * argv[]) {
     nh_private.param<bool>("inverted", inverted, false);
     nh_private.param<bool>("angle_compensate", angle_compensate, false);
     nh_private.param<std::string>("scan_mode", scan_mode, std::string());
+    nh_private.param<double>("latency", latency, 0.0);
+    latency *= 1.e-3; // ms -> s
 
     ROS_INFO("RPLIDAR running on ROS package rplidar_ros. SDK Version:"RPLIDAR_SDK_VERSION"");
 
@@ -290,6 +294,7 @@ int main(int argc, char * argv[]) {
         op_result = drv->grabScanDataHq(nodes, count);
         end_scan_time = ros::Time::now();
         scan_duration = (end_scan_time - start_scan_time).toSec();
+        start_scan_time -= ros::Duration(latency);
 
         if (op_result == RESULT_OK) {
             op_result = drv->ascendScanData(nodes, count);
