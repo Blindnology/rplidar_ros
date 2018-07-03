@@ -52,7 +52,7 @@ void publish_scan(ros::Publisher *pub,
                   size_t node_count, ros::Time start,
                   double scan_time, bool inverted,
                   float angle_min, float angle_max,
-                  float max_distance,
+                  float min_distance, float max_distance,
                   std::string frame_id)
 {
     static int scan_count = 0;
@@ -75,7 +75,7 @@ void publish_scan(ros::Publisher *pub,
 
     scan_msg.scan_time = scan_time;
     scan_msg.time_increment = scan_time / (double)(node_count-1);
-    scan_msg.range_min = 0.15;
+    scan_msg.range_min = min_distance;//0.15;
     scan_msg.range_max = max_distance;//8.0;
 
     scan_msg.intensities.resize(node_count);
@@ -187,7 +187,7 @@ int main(int argc, char * argv[]) {
     std::string frame_id;
     bool inverted = false;
     bool angle_compensate = true;
-    float max_distance = 8.0;
+    float min_distance, max_distance;
     int angle_compensate_multiple = 1;//it stand of angle compensate at per 1 degree
     std::string scan_mode;
     double latency;
@@ -201,6 +201,8 @@ int main(int argc, char * argv[]) {
     nh_private.param<bool>("inverted", inverted, false);
     nh_private.param<bool>("angle_compensate", angle_compensate, false);
     nh_private.param<std::string>("scan_mode", scan_mode, std::string());
+    nh_private.param<double>("min_distance", min_distance, 0.15);
+    nh_private.param<double>("max_distance", max_distance, 8.0);
     nh_private.param<double>("latency", latency, 0.0);
     latency *= 1.e-3; // ms -> s
 
@@ -322,7 +324,8 @@ int main(int argc, char * argv[]) {
   
                     publish_scan(&scan_pub, angle_compensate_nodes, angle_compensate_nodes_count,
                              start_scan_time, scan_duration, inverted,
-                             angle_min, angle_max, max_distance,
+                             angle_min, angle_max,
+                             min_distance, max_distance,
                              frame_id);
                 } else {
                     int start_node = 0, end_node = 0;
@@ -339,7 +342,8 @@ int main(int argc, char * argv[]) {
 
                     publish_scan(&scan_pub, &nodes[start_node], end_node-start_node +1,
                              start_scan_time, scan_duration, inverted,
-                             angle_min, angle_max, max_distance,
+                             angle_min, angle_max,
+                             min_distance, max_distance,
                              frame_id);
                }
             } else if (op_result == RESULT_OPERATION_FAIL) {
@@ -349,7 +353,8 @@ int main(int argc, char * argv[]) {
 
                 publish_scan(&scan_pub, nodes, count,
                              start_scan_time, scan_duration, inverted,
-                             angle_min, angle_max, max_distance,
+                             angle_min, angle_max,
+                             min_distance, max_distance,
                              frame_id);
             }
         }
