@@ -7,7 +7,7 @@
   <param name="inverted"            type="bool"   value="false"/>
   <param name="angle_compensate"    type="bool"   value="true"/>
   <param name="min_distance"        type="double" value="0.5"/>
-  <param name="max_distance"        type="double" value="8.0"/>
+  <param name="max_distance"        type="double" value="8.01"/>
   <param name="latency"             type="double" value="-80.0"/>
   </node>
 </launch>
